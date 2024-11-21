@@ -48,7 +48,7 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
                 audio.playbackRate = playbackRate;
             }
         });
-    }, [playbackRate]);
+    }, [playbackRate, audios]);
 
     const navigate = useNavigate();
     const handlePageChange = (newPage: string) => {
