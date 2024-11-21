@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import {useEffect, useState} from 'react'
 import './App.css'
 import CsvDisplay from "./CsvDisplay.tsx";
 import '@fontsource/roboto/300.css';
@@ -8,7 +8,6 @@ import '@fontsource/roboto/700.css';
 import Papa from "papaparse";
 import CsvRow from "./entities/CsvRow.ts";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 
 function App() {
     const [csvRows, setCsvRows] = useState<CsvRow[]>([]);
