@@ -8,18 +8,18 @@ import CsvRow from "./entities/CsvRow.ts";
 import {useParams, useNavigate} from "react-router-dom";
 import headphoneImage  from "./assets/headphone.png";
 
-
 interface Props {
     csvRows: CsvRow[];
 }
+
+const CONTINUING_PLAYING_INTERVAL = 8000;
 const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
-    // const [page, setPage] = useState(1);
     const [pages, setPages] = useState<{num: number, label: string}[]>([]);
-    // const [data, setData] = useState<CsvRow[]>([]);
     const [audios, setAudios] = useState<Audio[]>([]);
     const [playbackRate, setPlaybackRate] = useState(1.0);
+    const [continuePlaying, setContinuePlaying] = useState(false);
+    const [lastPlayedIndex, setLastPlayedIndex] = useState<number | null>(null);
     const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
-
     const { week, page } = useParams<{ week: string; page: string }>();
 
     useEffect(() => {
@@ -41,6 +41,7 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
                     return { title: row.title, url: row.url };
                 })
         );
+        setLastPlayedIndex(null);
     }, [csvRows, week, page]);
 
     useEffect(() => {
@@ -56,6 +57,44 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
         navigate(`/audio/${week}/${newPage}`);
     };
 
+    const playNextAudio = (currentIndex: number) => {
+        if (continuePlaying && currentIndex < audioRefs.current.length) {
+            const currentAudio = audioRefs.current[currentIndex];
+            if (currentAudio) {
+                currentAudio.currentTime = 0; // Reset to start
+                currentAudio.play();
+                setLastPlayedIndex(currentIndex);
+                currentAudio.onended = () => {
+                    setTimeout(() => playNextAudio(currentIndex + 1), CONTINUING_PLAYING_INTERVAL);
+                };
+            }
+        }
+    };
+
+    const handleAudioPlay = (index: number) => {
+        audioRefs.current.forEach((audio, i) => {
+            if (audio) {
+                if (i !== index) {
+                    audio.pause();
+                    audio.currentTime = 0; // Reset to start
+                }
+            }
+        });
+        setLastPlayedIndex(index);
+    };
+
+    useEffect(() => {
+        audioRefs.current.forEach((audio, index) => {
+            if (audio) {
+                audio.onplay = () => handleAudioPlay(index);
+                audio.onended = () => {
+                    if (continuePlaying) {
+                        setTimeout(() => playNextAudio(index + 1), CONTINUING_PLAYING_INTERVAL);
+                    }
+                };
+            }
+        });
+    }, [continuePlaying, audios]);
 
     return (
         <div>
@@ -77,7 +116,7 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
                     </Select>
                 </FormControl>
             </Box>
-            <div>
+            <div style={{display: "flex", gap: "10px", justifyContent: "center", alignItems: "center"}}>
                 <FormControl sx={{ minWidth: "100px;"}}>
                     <InputLabel id="demo-simple-select-label">再生速度</InputLabel>
                     <Select
@@ -94,26 +133,42 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
                         }
                     </Select>
                 </FormControl>
+                <FormControl sx={{ minWidth: "100px;"}}>
+                    <InputLabel id="continue-playing-select-label">続けて再生</InputLabel>
+                    <Select
+                        labelId="continue-playing-select-label"
+                        id="continue-playing-select"
+                        value={continuePlaying ? "yes" : "no"}
+                        label="Continue playing"
+                        onChange={(e) => setContinuePlaying(e.target.value === "yes")}
+                    >
+                        <MenuItem value="no">OFF</MenuItem>
+                        <MenuItem value="yes">ON</MenuItem>
+                    </Select>
+                </FormControl>
             </div>
             <List>
                 {audios.map((audio, rowIndex) => (
                     <div key={page + '_' + rowIndex}>
                         <ListItem
-                                  sx={{
-                                      display: "flex",
-                                      justifyContent: "center", // 横方向に中央寄せ
-                                      alignItems: "center", // 縦方向に中央寄せ
-                                      gap: "10px", // 要素間の間隔
-                                  }}
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center", // 横方向に中央寄せ
+                                alignItems: "center", // 縦方向に中央寄せ
+                                gap: "10px", // 要素間の間隔
+                                textDecoration: lastPlayedIndex === rowIndex ? "underline" : "none", // Underline last played
+                                textDecorationColor: lastPlayedIndex === rowIndex ? "#86bff7" : "inherit", // Pink color
+                                textDecorationThickness: lastPlayedIndex === rowIndex ? "5px" : "inherit" // Bolder
+                            }}
                         >
-                                {audio.title}
-                                <audio ref={(el) => (audioRefs.current[rowIndex] = el)} preload="metadata"
-                                    controls>
-                                    <source
-                                        src={audio.url}
-                                        type="audio/mpeg"/>
-                                    お使いのブラウザは音声プレーヤーをサポートしていません。
-                                </audio>
+                            {audio.title}
+                            <audio ref={(el) => (audioRefs.current[rowIndex] = el)} preload="metadata"
+                                   controls>
+                                <source
+                                    src={audio.url}
+                                    type="audio/mpeg"/>
+                                お使いのブラウザは音声プレーヤーをサポートしていません。
+                            </audio>
                         </ListItem>
                         <Divider/>
                     </div>
