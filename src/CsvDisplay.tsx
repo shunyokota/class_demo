@@ -6,6 +6,7 @@ import Audio from "./entities/Audio.ts";
 import {Box, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import CsvRow from "./entities/CsvRow.ts";
 import {useParams, useNavigate} from "react-router-dom";
+import headphoneImage  from "./assets/headphone.png";
 
 
 interface Props {
@@ -61,7 +62,10 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
 
     return (
         <div>
-            <h1>Basic - week{week}</h1>
+            <h1 style={{display: "flex", gap: "10px", justifyContent: "center", alignItems: "center"}}>
+                <img src={headphoneImage} alt="headphone" style={{width: "50px"}}/>
+                Basic - week{week}
+            </h1>
             <Box marginBottom="20px">
                 <FormControl sx={{ minWidth: "100px;"}}>
                     <Select
