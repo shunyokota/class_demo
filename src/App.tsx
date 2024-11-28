@@ -24,23 +24,6 @@ function App() {
     }, []);
   return (
     <>
-        <div>
-            {/*<FormControl sx={{ minWidth: "100px;"}}>*/}
-            {/*    <InputLabel id="demo-simple-select-label">再生速度</InputLabel>*/}
-            {/*    <Select*/}
-            {/*        labelId="demo-simple-select-label"*/}
-            {/*        value={playbackRate}*/}
-            {/*        label="再生速度"*/}
-            {/*        onChange={(e) => setPlaybackRate(parseFloat(e.target.value as string))}*/}
-            {/*    >*/}
-            {/*        {*/}
-            {/*            [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5].map((speed, rowIndex) => (*/}
-            {/*                <MenuItem value={speed} key={rowIndex}>{speed}倍</MenuItem>*/}
-            {/*            ))*/}
-            {/*        }*/}
-            {/*    </Select>*/}
-            {/*</FormControl>*/}
-        </div>
         <Router>
             <Routes>
                 <Route path="/audio/:week/:page" element={<CsvDisplay csvRows={csvRows} />} />

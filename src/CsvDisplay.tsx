@@ -53,9 +53,6 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
 
     const navigate = useNavigate();
     const handlePageChange = (newPage: string) => {
-        // console.log('test');
-        // const newPage = event.target.value;
-        // URLを /audio/:week/:newPage に更新
         navigate(`/audio/${week}/${newPage}`);
     };
 
@@ -64,7 +61,7 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
         <div>
             <h1 style={{display: "flex", gap: "10px", justifyContent: "center", alignItems: "center"}}>
                 <img src={headphoneImage} alt="headphone" style={{width: "50px"}}/>
-                Basic - week{week}
+                Basic-week{week}
             </h1>
             <Box marginBottom="20px">
                 <FormControl sx={{ minWidth: "100px;"}}>
