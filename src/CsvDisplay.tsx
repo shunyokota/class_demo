@@ -100,7 +100,7 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
         <div>
             <h1 style={{display: "flex", gap: "10px", justifyContent: "center", alignItems: "center"}}>
                 <img src={headphoneImage} alt="headphone" style={{width: "50px"}}/>
-                Basic-week{week}
+                基礎-week{week}
             </h1>
             <Box marginBottom="20px">
                 <FormControl sx={{ minWidth: "100px;"}}>
@@ -149,19 +149,20 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
             </div>
             <List>
                 {audios.map((audio, rowIndex) => (
-                    <div key={page + '_' + rowIndex}>
+                    <div key={audio.url}>
                         <ListItem
                             sx={{
                                 display: "flex",
                                 justifyContent: "center", // 横方向に中央寄せ
                                 alignItems: "center", // 縦方向に中央寄せ
-                                gap: "10px", // 要素間の間隔
-                                textDecoration: lastPlayedIndex === rowIndex ? "underline" : "none", // Underline last played
-                                textDecorationColor: lastPlayedIndex === rowIndex ? "#86bff7" : "inherit", // Pink color
-                                textDecorationThickness: lastPlayedIndex === rowIndex ? "5px" : "inherit" // Bolder
+                                gap: "10px" // 要素間の間隔
                             }}
                         >
-                            {audio.title}
+                            <span style={{
+                                borderBottom: lastPlayedIndex === rowIndex ? "5px solid #86bff7" : "none"
+                            }}>
+                                {audio.title}
+                            </span>
                             <audio ref={(el) => (audioRefs.current[rowIndex] = el)} preload="metadata"
                                    controls>
                                 <source
