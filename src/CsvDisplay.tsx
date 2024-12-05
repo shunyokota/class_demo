@@ -97,7 +97,7 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
     }, [continuePlaying, audios]);
 
     return (
-        <div>
+        <div style={{ width: 'fit-content', margin: 'auto'}}>
             <h1 style={{display: "flex", gap: "10px", justifyContent: "center", alignItems: "center"}}>
                 <img src={headphoneImage} alt="headphone" style={{width: "50px"}}/>
                 基礎-week{week}
