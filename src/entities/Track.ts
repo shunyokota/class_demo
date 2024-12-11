@@ -1,5 +1,5 @@
-type Audio = {
+type Track = {
     title: string;
     url: string;
 }
-export default Audio;
+export default Track;

@@ -63,6 +63,7 @@ function App() {
                     </List>
                 </Drawer>
                 <Routes>
+                    {/*<Route path="/example" element={<Example />} />*/}
                     <Route path="/audio/:week/:page" element={<AudioPlayer csvRows={csvRows} />} />
                     <Route path="*" element={<Navigate to="/audio/1/1" replace />} />
                 </Routes>

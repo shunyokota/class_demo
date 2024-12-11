@@ -2,11 +2,12 @@ import React, {useEffect, useRef, useState} from "react";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
-import Audio from "./entities/Audio.ts";
+import Track from "./entities/Track.ts";
 import {Box, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import CsvRow from "./entities/CsvRow.ts";
 import {useParams, useNavigate} from "react-router-dom";
 import headphoneImage  from "./assets/headphone.png";
+import Example from "./Example.tsx";
 
 interface Props {
     csvRows: CsvRow[];
@@ -15,7 +16,7 @@ interface Props {
 const CONTINUING_PLAYING_INTERVAL = 8000;
 const AudioPlayer: React.FC<Props> = ({ csvRows }) => {
     const [pages, setPages] = useState<{num: number, label: string}[]>([]);
-    const [audios, setAudios] = useState<Audio[]>([]);
+    const [audios, setAudios] = useState<Track[]>([]);
     const [playbackRate, setPlaybackRate] = useState(1.0);
     const [continuePlaying, setContinuePlaying] = useState(false);
     const [lastPlayedIndex, setLastPlayedIndex] = useState<number | null>(null);
@@ -116,6 +117,7 @@ const AudioPlayer: React.FC<Props> = ({ csvRows }) => {
                     </Select>
                 </FormControl>
             </Box>
+            <Example tracks={audios}/>
             <div style={{display: "flex", gap: "10px", justifyContent: "center", alignItems: "center"}}>
                 <FormControl sx={{ minWidth: "100px;"}}>
                     <InputLabel id="demo-simple-select-label">再生速度</InputLabel>
