@@ -1,9 +1,14 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { Howl } from "howler";
 import Track from "./entities/Track.ts";
 import Divider from "@mui/material/Divider";
-import {FormControl, InputLabel, ListItemButton, MenuItem, Select} from "@mui/material";
+import {Button, ButtonGroup, FormControl, InputLabel, ListItemButton, MenuItem, Select} from "@mui/material";
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
+const CONTINUING_PLAYING_INTERVAL = 8000;
 
 interface Props {
     tracks: Track[];
@@ -166,12 +171,14 @@ const Example: React.FC<Props> = ({ tracks }) => {
                 </FormControl>
             </div>
             <div style={{textAlign: "center", padding: "20px"}}>
-                <p>Now Playing: {tracks[currentTrackIndex].title}</p>
-                <div>
-                    <button onClick={handlePrev}>Previous</button>
-                    <button onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</button>
-                    <button onClick={handleNext}>Next</button>
-                </div>
+                <p style={{fontSize:'120%', fontWeight: 'bold'}}>{tracks[currentTrackIndex].title}</p>
+                <ButtonGroup variant="outlined" aria-label="Basic button group">
+                    <Button  onClick={handlePrev}><SkipPreviousIcon/></Button>
+                    <Button onClick={handlePlayPause}>
+                        {isPlaying ? <PauseIcon/> : <PlayArrowIcon/>}
+                    </Button>
+                    <Button  onClick={handleNext}><SkipNextIcon/></Button>
+                </ButtonGroup>
                 <div style={{margin: "20px 0"}}>
                     <input
                         type="range"
