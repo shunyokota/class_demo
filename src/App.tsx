@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import './App.css';
-import CsvDisplay from "./CsvDisplay.tsx";
+import AudioPlayer from "./AudioPlayer.tsx";
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -63,7 +63,7 @@ function App() {
                     </List>
                 </Drawer>
                 <Routes>
-                    <Route path="/audio/:week/:page" element={<CsvDisplay csvRows={csvRows} />} />
+                    <Route path="/audio/:week/:page" element={<AudioPlayer csvRows={csvRows} />} />
                     <Route path="*" element={<Navigate to="/audio/1/1" replace />} />
                 </Routes>
             </Router>

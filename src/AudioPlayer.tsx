@@ -13,7 +13,7 @@ interface Props {
 }
 
 const CONTINUING_PLAYING_INTERVAL = 8000;
-const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
+const AudioPlayer: React.FC<Props> = ({ csvRows }) => {
     const [pages, setPages] = useState<{num: number, label: string}[]>([]);
     const [audios, setAudios] = useState<Audio[]>([]);
     const [playbackRate, setPlaybackRate] = useState(1.0);
@@ -179,4 +179,4 @@ const CsvDisplay: React.FC<Props> = ({ csvRows }) => {
     );
 };
 
-export default CsvDisplay;
+export default AudioPlayer;
