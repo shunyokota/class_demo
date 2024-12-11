@@ -16,12 +16,26 @@ interface Props {
 
 const Example: React.FC<Props> = ({ tracks }) => {
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-    const [isPlaying, setIsPlaying] = useState(false);
+    // const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
+    const progressRef = useRef(0);
+    useEffect(() => {
+        progressRef.current = progress;
+    }, [progress]);
     const [duration, setDuration] = useState(0);
+    const durationRef = useRef(0);
+    useEffect(() => {
+        durationRef.current = duration;
+    }, [duration]);
     const [playbackRate, setPlaybackRate] = useState(1.0);
     const [continuePlaying, setContinuePlaying] = useState(false);
     const continuePlayingRef = useRef(continuePlaying);
+    const inContinuePlayingIntervalRef = useRef<boolean>(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const isPlayingRef = useRef<boolean>(false);
+    useEffect(() => {
+        isPlayingRef.current = isPlaying;
+    }, [isPlaying]);
 
     useEffect(() => {
         continuePlayingRef.current = continuePlaying;
@@ -36,11 +50,16 @@ const Example: React.FC<Props> = ({ tracks }) => {
         }
         const sound = new Howl({
             src: [tracks[index].url],
-            html5: true,
+            // html5: true,
             onend: () => {
-                // console.log(continuePlaying);
                 if (continuePlayingRef.current) {
-                    handleNext();
+                    setProgress(durationRef.current);
+                    inContinuePlayingIntervalRef.current = true;
+                    setTimeout(() => {
+                        if (isPlayingRef.current && inContinuePlayingIntervalRef.current) {
+                            handleNext();
+                        }
+                    }, CONTINUING_PLAYING_INTERVAL);
                 } else {
                     setIsPlaying(false);
                     setProgress(0);
@@ -75,9 +94,12 @@ const Example: React.FC<Props> = ({ tracks }) => {
     }, [playTrack]);
 
     const handlePlayPause = () => {
-        if (isPlaying) {
+        if (isPlayingRef.current) {
             soundRef.current?.pause();
-            setIsPlaying(false);
+            setIsPlaying(false)
+        } else if (inContinuePlayingIntervalRef.current) {
+            inContinuePlayingIntervalRef.current = false;
+            handleNext();
         } else {
             if (!soundRef.current) {
                 playTrackRef.current(currentTrackIndex);
@@ -89,6 +111,7 @@ const Example: React.FC<Props> = ({ tracks }) => {
     };
 
     const handleNext = () => {
+        inContinuePlayingIntervalRef.current = false;
         setCurrentTrackIndex((prevIndex) => {
             const nextIndex = (prevIndex + 1) % tracks.length;
             playTrackRef.current(nextIndex);
@@ -97,7 +120,7 @@ const Example: React.FC<Props> = ({ tracks }) => {
     };
 
     const handlePrev = () => {
-        const prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+        const prevIndex = progressRef.current > 3 ? currentTrackIndex : (currentTrackIndex - 1 + tracks.length) % tracks.length;
         setCurrentTrackIndex(prevIndex);
         playTrackRef.current(prevIndex);
     };
@@ -125,6 +148,8 @@ const Example: React.FC<Props> = ({ tracks }) => {
             setIsPlaying(false);
             setCurrentTrackIndex(0);
             setProgress(0);
+            setDuration(0);
+            inContinuePlayingIntervalRef.current = false;
         };
     }, [tracks]);
 
