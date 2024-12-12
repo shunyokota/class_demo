@@ -1,8 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Howl } from "howler";
 import Track from "./entities/Track.ts";
 import Divider from "@mui/material/Divider";
-import {Button, ButtonGroup, FormControl, InputLabel, ListItemButton, MenuItem, Select} from "@mui/material";
+import { Button, ButtonGroup, FormControl, InputLabel, ListItemButton, MenuItem, Select, CircularProgress } from "@mui/material"; // Added CircularProgress
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -16,7 +16,6 @@ interface Props {
 
 const Example: React.FC<Props> = ({ tracks }) => {
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-    // const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
     const progressRef = useRef(0);
     useEffect(() => {
@@ -36,6 +35,7 @@ const Example: React.FC<Props> = ({ tracks }) => {
     useEffect(() => {
         isPlayingRef.current = isPlaying;
     }, [isPlaying]);
+    const [loading, setLoading] = useState(false); // Added loading state
 
     useEffect(() => {
         continuePlayingRef.current = continuePlaying;
@@ -48,9 +48,12 @@ const Example: React.FC<Props> = ({ tracks }) => {
         if (soundRef.current) {
             soundRef.current.stop();
         }
+        setLoading(true); // Set loading to true when starting to load
         const sound = new Howl({
             src: [tracks[index].url],
-            // html5: true,
+            onload: () => {
+                setLoading(false); // Set loading to false when finished loading
+            },
             onend: () => {
                 if (continuePlayingRef.current) {
                     setProgress(durationRef.current);
@@ -73,12 +76,10 @@ const Example: React.FC<Props> = ({ tracks }) => {
 
         setIsPlaying(true);
 
-        // 音声の長さを設定
         sound.once("load", () => {
             setDuration(sound.duration());
         });
 
-        // プログレスバーを更新
         if (progressIntervalRef.current) {
             clearInterval(progressIntervalRef.current);
         }
@@ -154,18 +155,17 @@ const Example: React.FC<Props> = ({ tracks }) => {
     }, [tracks]);
 
     useEffect(() => {
-        if (progressIntervalRef.current) {
-            soundRef.current?.rate(playbackRate);
-        }
-    },
-    [playbackRate]
+            if (progressIntervalRef.current) {
+                soundRef.current?.rate(playbackRate);
+            }
+        },
+        [playbackRate]
     );
-
 
     return (tracks.length > 0 && (
         <>
-            <div style={{display: "flex", gap: "10px", justifyContent: "center", alignItems: "center"}}>
-                <FormControl sx={{minWidth: "100px;"}}>
+            <div style={{ display: "flex", gap: "10px", justifyContent: "center", alignItems: "center" }}>
+                <FormControl sx={{ minWidth: "100px;" }}>
                     <InputLabel id="demo-simple-select-label">再生速度</InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
@@ -181,7 +181,7 @@ const Example: React.FC<Props> = ({ tracks }) => {
                         }
                     </Select>
                 </FormControl>
-                <FormControl sx={{minWidth: "100px;"}}>
+                <FormControl sx={{ minWidth: "100px;" }}>
                     <InputLabel id="continue-playing-select-label">続けて再生</InputLabel>
                     <Select
                         labelId="continue-playing-select-label"
@@ -195,16 +195,16 @@ const Example: React.FC<Props> = ({ tracks }) => {
                     </Select>
                 </FormControl>
             </div>
-            <div style={{textAlign: "center", padding: "20px"}}>
-                <p style={{fontSize:'120%', fontWeight: 'bold'}}>{tracks[currentTrackIndex].title}</p>
+            <div style={{ textAlign: "center", padding: "20px" }}>
+                <p style={{ fontSize: '120%', fontWeight: 'bold' }}>{tracks[currentTrackIndex].title}</p>
                 <ButtonGroup variant="outlined" aria-label="Basic button group">
-                    <Button  onClick={handlePrev}><SkipPreviousIcon/></Button>
+                    <Button onClick={handlePrev}><SkipPreviousIcon /></Button>
                     <Button onClick={handlePlayPause}>
-                        {isPlaying ? <PauseIcon/> : <PlayArrowIcon/>}
+                        {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
                     </Button>
-                    <Button  onClick={handleNext}><SkipNextIcon/></Button>
+                    <Button onClick={handleNext}><SkipNextIcon /></Button>
                 </ButtonGroup>
-                <div style={{margin: "20px 0"}}>
+                <div style={{ margin: "20px 0" }}>
                     <input
                         type="range"
                         min="0"
@@ -212,10 +212,13 @@ const Example: React.FC<Props> = ({ tracks }) => {
                         value={progress}
                         step="0.1"
                         onChange={handleSeek}
-                        style={{width: "100%"}}
+                        style={{ width: "100%" }}
                     />
                     <div>
-                        <span>{formatTime(progress)}</span> / <span>{formatTime(duration)}</span>
+                        {
+                            loading ? <CircularProgress size={15}/> :
+                                (<><span>{formatTime(progress)}</span> / <span>{formatTime(duration)}</span></>)
+                        }
                     </div>
                 </div>
             </div>
@@ -236,7 +239,7 @@ const Example: React.FC<Props> = ({ tracks }) => {
                             {track.title}
                         </span>
                     </ListItemButton>
-                    <Divider/>
+                    <Divider />
                 </div>
             ))}
         </>
