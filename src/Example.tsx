@@ -76,10 +76,13 @@ const Example: React.FC<Props> = ({ tracks }) => {
 
         setIsPlaying(true);
 
-        sound.once("load", () => {
+        if (sound.state() === "loaded") {
             setDuration(sound.duration());
-        });
-
+        } else {
+            sound.once("load", () => {
+                setDuration(sound.duration());
+            });
+        }
         if (progressIntervalRef.current) {
             clearInterval(progressIntervalRef.current);
         }
@@ -196,7 +199,7 @@ const Example: React.FC<Props> = ({ tracks }) => {
                 </FormControl>
             </div>
             <div style={{ textAlign: "center", padding: "20px" }}>
-                <p style={{ fontSize: '120%', fontWeight: 'bold' }}>{tracks[currentTrackIndex].title}</p>
+                <p style={{ fontSize: '120%', fontWeight: 'bold' }}>{tracks[currentTrackIndex]?.title}</p>
                 <ButtonGroup variant="outlined" aria-label="Basic button group">
                     <Button onClick={handlePrev}><SkipPreviousIcon /></Button>
                     <Button onClick={handlePlayPause}>
