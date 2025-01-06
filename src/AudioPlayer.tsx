@@ -42,13 +42,13 @@ const AudioPlayer: React.FC<Props> = ({ csvRows }) => {
     };
 
     return (
-        <div style={{ width: 'fit-content', margin: 'auto'}}>
+        <div style={{width: 'fit-content', margin: 'auto'}}>
             <h1 style={{display: "flex", gap: "10px", justifyContent: "center", alignItems: "center"}}>
                 <img src={headphoneImage} alt="headphone" style={{width: "50px"}}/>
                 基礎-week{week}
             </h1>
             <Box marginBottom="20px">
-                <FormControl sx={{ minWidth: "100px;"}}>
+                <FormControl sx={{minWidth: "100px;"}}>
                     <Select
                         value={page}
                         onChange={(e) => handlePageChange(e.target.value)}
@@ -62,6 +62,14 @@ const AudioPlayer: React.FC<Props> = ({ csvRows }) => {
                 </FormControl>
             </Box>
             <Example tracks={audios}/>
+            <button
+                type="button"
+                onClick={() => {
+                    throw new Error("Sentry Test Error");
+                }}
+            >
+                TEST
+            </button>
         </div>
     );
 };
