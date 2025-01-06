@@ -62,14 +62,6 @@ const AudioPlayer: React.FC<Props> = ({ csvRows }) => {
                 </FormControl>
             </Box>
             <Example tracks={audios}/>
-            <button
-                type="button"
-                onClick={() => {
-                    throw new Error("Sentry Test Error");
-                }}
-            >
-                TEST
-            </button>
         </div>
     );
 };
