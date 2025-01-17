@@ -178,7 +178,7 @@ const Example: React.FC<Props> = ({ tracks }) => {
                         onChange={(e) => setPlaybackRate(parseFloat(e.target.value as string))}
                     >
                         {
-                            [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5].map((speed, rowIndex) => (
+                            [0.9, 1.0].map((speed, rowIndex) => (
                                 <MenuItem value={speed} key={rowIndex}>{speed}倍</MenuItem>
                             ))
                         }
